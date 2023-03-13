@@ -14,3 +14,5 @@ class PokemonEntity(models.Model):
         on_delete=models.CASCADE)
     Lat = models.FloatField(blank=True)
     Len = models.FloatField(blank=True)
+    Appeared_at = models.DateTimeField(null=True)
+    Disappeared_at = models.DateTimeField(null=True)
