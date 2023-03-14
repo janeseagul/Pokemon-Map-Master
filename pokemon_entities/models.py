@@ -37,7 +37,7 @@ class PokemonEntity(models.Model):
         Pokemon,
         verbose_name = 'Покемон',
         null=True,
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         related_name='entities'
     )
 
