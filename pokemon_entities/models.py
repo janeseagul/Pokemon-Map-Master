@@ -1,14 +1,27 @@
-from django.db import models  # noqa F401
+from django.db import models
 
-# your models here
+
+DEFAULT_IMAGE_URL = (
+    'https://vignette.wikia.nocookie.net/pokemon/images/6/6e/%21.png/revision'
+    '/latest/fixed-aspect-ratio-down/width/240/height/240?cb=20130525215832'
+    '&fill=transparent'
+)
+
 class Pokemon(models.Model):
     title = models.CharField(max_length=200, blank=True)
-    image = models.ImageField(null=True)
+    image = models.ImageField(blank=True, null=True)
+
+    def get_image_url(self, request):
+        image_url = DEFAULT_IMAGE_URL
+        if self.image:
+            image_url = request.build_absolute_uri(self.image.url)
+        return image_url
+
     def __str__(self):
         return f'{self.title}'
 
 class PokemonEntity(models.Model):
-    Pokemon = models.ForeignKey(
+    pokemon = models.ForeignKey(
         Pokemon,
         null=True,
         on_delete=models.CASCADE)
@@ -21,4 +34,5 @@ class PokemonEntity(models.Model):
     Strength = models.CharField(max_length=20, null=True)
     Defence = models.CharField(max_length=20, null=True)
     Stamina = models.CharField(max_length=20, null=True)
-
+    def __str__(self):
+        return f'{self.pokemon} Level {self.level}'
