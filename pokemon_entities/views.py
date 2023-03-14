@@ -65,36 +65,48 @@ def show_all_pokemons(request):
 
 
 def show_pokemon(request, pokemon_id):
-    current_datetime = localtime()
-    try:
-        pokemon = Pokemon.objects.get(id=int(pokemon_id))
-        image_url = pokemon.get_image_url(request)
-        pokemon_metadata = {
-            "pokemon_id": pokemon.id,
-            "title_ru": pokemon.title,
-            "title_en": pokemon.title_en,
-            "title_jp": pokemon.title_jp,
-            "img_url": image_url,
-            "description": pokemon.description
+    pokemon = get_object_or_404(Pokemon, id=int(pokemon_id))
+    image_url = pokemon.get_image_url(request)
+    previous_evolution = pokemon.previous_evolution
+    if previous_evolution:
+        previous_evolution = {
+            "title_ru": previous_evolution.title,
+            "pokemon_id": previous_evolution.id,
+            "img_url": previous_evolution.get_image_url(request)
         }
-    except Pokemon.DoesNotExist:
-        return HttpResponseNotFound('<h1>Такой покемон не найден</h1>')
+    next_evolution = pokemon.next_evolution.first()
+    if next_evolution:
+        next_evolution = {
+            "title_ru": next_evolution.title,
+            "pokemon_id": next_evolution.id,
+            "img_url": next_evolution.get_image_url(request)
+        }
 
+    serialized_pokemon = {
+        "pokemon_id": pokemon.id,
+        "title_ru": pokemon.title,
+        "title_en": pokemon.title_en,
+        "title_jp": pokemon.title_jp,
+        "img_url": image_url,
+        "description": pokemon.description,
+        "previous_evolution": previous_evolution,
+        "next_evolution": next_evolution
+    }
+
+    current_datetime = localtime()
     pokemon_entities = PokemonEntity.objects.filter(
         pokemon=pokemon,
-        Appeared_at__lte=current_datetime,
-        Disappeared_at__gte=current_datetime,
+        appeared_at__lte=current_datetime,
+        disappeared_at__gte=current_datetime
     )
-
     folium_map = folium.Map(location=MOSCOW_CENTER, zoom_start=12)
     for pokemon_entity in pokemon_entities:
-        image_url = pokemon_entity.pokemon.get_image_url(request)
         add_pokemon(
-            folium_map, pokemon_entity.lat,
-            pokemon_entity.lon,
+            folium_map, pokemon_entity.latitude,
+            pokemon_entity.longitude,
             image_url
         )
 
     return render(request, 'pokemon.html', context={
-        'map': folium_map._repr_html_(), 'pokemon': pokemon_metadata
+        'map': folium_map._repr_html_(), 'pokemon': serialized_pokemon
     })
