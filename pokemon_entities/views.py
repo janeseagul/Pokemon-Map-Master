@@ -5,16 +5,11 @@ from django.utils.timezone import localtime
 
 from .models import Pokemon, PokemonEntity
 
+
 MOSCOW_CENTER = [55.751244, 37.618423]
 
-DEFAULT_IMAGE_URL = (
-    'https://vignette.wikia.nocookie.net/pokemon/images/6/6e/%21.png/revision'
-    '/latest/fixed-aspect-ratio-down/width/240/height/240?cb=20130525215832'
-    '&fill=transparent'
-)
 
-
-def add_pokemon(folium_map, lat, lon, image_url=DEFAULT_IMAGE_URL):
+def add_pokemon(folium_map, lat, lon, image_url):
     icon = folium.features.CustomIcon(
         image_url,
         icon_size=(50, 50),
@@ -48,7 +43,7 @@ def show_all_pokemons(request):
     pokemons_on_page = []
 
     for pokemon in pokemons_from_model:
-        image_url = None
+        image_url = pokemon_entity.pokemon.get_image_url(request)
         if pokemon.image:
             image_url = pokemon.image.url
         pokemons_on_page.append({
@@ -67,7 +62,7 @@ def show_all_pokemons(request):
 def show_pokemon(request, pokemon_id):
     pokemon = get_object_or_404(Pokemon, id=int(pokemon_id))
     image_url = pokemon.get_image_url(request)
-    previous_evolutions = pokemon.previous_evolution
+    previous_evolutions = pokemon.previous_evolutions
     if previous_evolutions:
         previous_evolutions = {
             "title_ru": previous_evolutions.title,

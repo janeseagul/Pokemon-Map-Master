@@ -6,7 +6,6 @@ DEFAULT_IMAGE_URL = (
     '&fill=transparent'
 )
 
-
 class Pokemon(models.Model):
     title = models.CharField('Имя покемона', max_length=200, blank=True)
     title_en = models.CharField('Имя покемона на английском', max_length=200, blank=True, null=True)
