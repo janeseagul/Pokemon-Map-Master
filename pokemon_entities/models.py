@@ -10,6 +10,7 @@ DEFAULT_IMAGE_URL = (
 class Pokemon(models.Model):
     title = models.CharField(max_length=200, blank=True)
     image = models.ImageField(blank=True, null=True)
+    description = models.TextField(default='Description not added yet')
 
     def get_image_url(self, request):
         image_url = DEFAULT_IMAGE_URL

@@ -55,6 +55,7 @@ def show_all_pokemons(request):
             'pokemon_id': pokemon.id,
             'img_url': image_url,
             'title_ru': pokemon.title,
+
         })
 
     return render(request, 'mainpage.html', context={
@@ -71,7 +72,8 @@ def show_pokemon(request, pokemon_id):
         pokemon_metadata = {
             "pokemon_id": pokemon.id,
             "title_ru": pokemon.title,
-            "img_url": image_url
+            "img_url": image_url,
+            "description": pokemon.description
         }
     except Pokemon.DoesNotExist:
         return HttpResponseNotFound('<h1>Такой покемон не найден</h1>')
