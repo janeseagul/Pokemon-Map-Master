@@ -9,6 +9,8 @@ DEFAULT_IMAGE_URL = (
 
 class Pokemon(models.Model):
     title = models.CharField(max_length=200, blank=True)
+    title_en = models.CharField(max_length=200, blank=True, null=True)
+    title_jp = models.CharField(max_length=200, blank=True, null=True)
     image = models.ImageField(blank=True, null=True)
     description = models.TextField(default='Description not added yet')
 
