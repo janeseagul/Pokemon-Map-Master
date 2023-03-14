@@ -8,11 +8,11 @@ DEFAULT_IMAGE_URL = (
 
 
 class Pokemon(models.Model):
-    title = models.CharField(max_length=200, blank=True)
-    title_en = models.CharField(max_length=200, blank=True, null=True)
-    title_jp = models.CharField(max_length=200, blank=True, null=True)
+    title = models.CharField('Имя покемона', max_length=200, blank=True)
+    title_en = models.CharField('Имя покемона на английском', max_length=200, blank=True, null=True)
+    title_jp = models.CharField('Имя покемона на японском', max_length=200, blank=True, null=True)
     image = models.ImageField(blank=True, null=True)
-    description = models.TextField(default='Description not added yet')
+    description = models.TextField('Описание покемона', blank=True, null=True)
     previous_evolution = models.ForeignKey(
         "self",
         verbose_name='Предыдущая стадия',
