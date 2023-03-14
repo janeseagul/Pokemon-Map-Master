@@ -41,13 +41,13 @@ class PokemonEntity(models.Model):
         related_name='entities'
     )
 
-    Lat = models.FloatField('Широта', null=True, blank=True)
-    Len = models.FloatField('Долгота', null=True, blank=True)
-    Appeared_at = models.DateTimeField('Когда появляется', null=True, blank=True)
-    Disappeared_at = models.DateTimeField('Когда исчезает', null=True, blank=True)
-    Level = models.IntegerField('Уровень', null=True, blank=True)
-    Health = models.IntegerField('Здоровье', null=True, blank=True)
-    Strength = models.IntegerField('Сила', null=True, blank=True)
-    Defence = models.IntegerField('Защита', null=True, blank=True)
-    Stamina = models.IntegerField('Выносливость', null=True, blank=True)
+    lat = models.FloatField('Широта', null=True, blank=True)
+    len = models.FloatField('Долгота', null=True, blank=True)
+    appeared_at = models.DateTimeField('Когда появляется', null=True, blank=True)
+    disappeared_at = models.DateTimeField('Когда исчезает', null=True, blank=True)
+    level = models.IntegerField('Уровень', null=True, blank=True)
+    health = models.IntegerField('Здоровье', null=True, blank=True)
+    strength = models.IntegerField('Сила', null=True, blank=True)
+    defence = models.IntegerField('Защита', null=True, blank=True)
+    stamina = models.IntegerField('Выносливость', null=True, blank=True)
 
