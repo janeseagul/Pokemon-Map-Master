@@ -1,6 +1,7 @@
 import folium
 from django.http import HttpResponseNotFound
 from django.shortcuts import render
+from django.utils.timezone import localtime
 import json
 from .models import Pokemon, PokemonEntity
 
@@ -27,15 +28,19 @@ def add_pokemon(folium_map, lat, lon, image_url=DEFAULT_IMAGE_URL):
 
 
 def show_all_pokemons(request):
-    pokemon_entities = PokemonEntity.objects.all()
+    current_datetime = localtime()
+    pokemon_entities = PokemonEntity.objects.filter(
+        Appeared_at__lte=current_datetime,
+        Disappeared_at__gte=current_datetime,
+    )
 
     folium_map = folium.Map(location=MOSCOW_CENTER, zoom_start=12)
 
     for pokemon_entity in pokemon_entities:
         image_url = pokemon_entity.pokemon.get_image_url(request)
         add_pokemon(
-            folium_map, pokemon_entity.lat,
-            pokemon_entity.lon,
+            folium_map, pokemon_entity.Lat,
+            pokemon_entity.Lon,
             image_url
         )
 
@@ -59,24 +64,33 @@ def show_all_pokemons(request):
 
 
 def show_pokemon(request, pokemon_id):
-    with open('pokemon_entities/pokemons.json', encoding='utf-8') as database:
-        pokemons = json.load(database)['pokemons']
-
-    for pokemon in pokemons:
-        if pokemon['pokemon_id'] == int(pokemon_id):
-            requested_pokemon = pokemon
-            break
-    else:
+    current_datetime = localtime()
+    try:
+        pokemon = Pokemon.objects.get(id=int(pokemon_id))
+        image_url = pokemon.get_image_url(request)
+        pokemon_metadata = {
+            "pokemon_id": pokemon.id,
+            "title_ru": pokemon.title,
+            "img_url": image_url
+        }
+    except Pokemon.DoesNotExist:
         return HttpResponseNotFound('<h1>Такой покемон не найден</h1>')
 
+    pokemon_entities = PokemonEntity.objects.filter(
+        pokemon=pokemon,
+        Appeared_at__lte=current_datetime,
+        Disappeared_at__gte=current_datetime,
+    )
+
     folium_map = folium.Map(location=MOSCOW_CENTER, zoom_start=12)
-    for pokemon_entity in requested_pokemon['entities']:
+    for pokemon_entity in pokemon_entities:
+        image_url = pokemon_entity.pokemon.get_image_url(request)
         add_pokemon(
-            folium_map, pokemon_entity['lat'],
-            pokemon_entity['lon'],
-            pokemon['img_url']
+            folium_map, pokemon_entity.lat,
+            pokemon_entity.lon,
+            image_url
         )
 
     return render(request, 'pokemon.html', context={
-        'map': folium_map._repr_html_(), 'pokemon': pokemon
+        'map': folium_map._repr_html_(), 'pokemon': pokemon_metadata
     })
