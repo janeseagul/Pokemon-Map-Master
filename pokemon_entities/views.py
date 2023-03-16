@@ -44,8 +44,6 @@ def show_all_pokemons(request):
 
     for pokemon in pokemons_from_model:
         image_url = pokemon_entity.pokemon.get_image_url(request)
-        if pokemon.image:
-            image_url = pokemon.image.url
         pokemons_on_page.append({
             'pokemon_id': pokemon.id,
             'img_url': image_url,

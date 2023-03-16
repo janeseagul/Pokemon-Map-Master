@@ -6,6 +6,7 @@ DEFAULT_IMAGE_URL = (
     '&fill=transparent'
 )
 
+
 class Pokemon(models.Model):
     title = models.CharField('Имя покемона', max_length=200, blank=True)
     title_en = models.CharField('Имя покемона на английском', max_length=200, blank=True, null=True)
@@ -18,7 +19,7 @@ class Pokemon(models.Model):
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name='next_evolution'
+        related_name='next_evolutions'
     )
 
     def get_image_url(self, request):
@@ -28,13 +29,13 @@ class Pokemon(models.Model):
         return image_url
 
     def __str__(self):
-        return f'{self.title}'
+        return self.title
 
 
 class PokemonEntity(models.Model):
     pokemon = models.ForeignKey(
         Pokemon,
-        verbose_name = 'Покемон',
+        verbose_name='Покемон',
         null=True,
         on_delete=models.PROTECT,
         related_name='entities'
@@ -49,4 +50,3 @@ class PokemonEntity(models.Model):
     strength = models.IntegerField('Сила', null=True, blank=True)
     defence = models.IntegerField('Защита', null=True, blank=True)
     stamina = models.IntegerField('Выносливость', null=True, blank=True)
-
