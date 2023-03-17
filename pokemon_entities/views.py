@@ -39,10 +39,10 @@ def show_all_pokemons(request):
             image_url
         )
 
-    pokemons_from_model = Pokemon.objects.all()
+    pokemons = Pokemon.objects.all()
     pokemons_on_page = []
 
-    for pokemon in pokemons_from_model:
+    for pokemon in pokemons:
         image_url = pokemon_entity.pokemon.get_image_url(request)
         pokemons_on_page.append({
             'pokemon_id': pokemon.id,
@@ -60,12 +60,12 @@ def show_all_pokemons(request):
 def show_pokemon(request, pokemon_id):
     pokemon = get_object_or_404(Pokemon, id=int(pokemon_id))
     image_url = pokemon.get_image_url(request)
-    previous_evolutions = pokemon.previous_evolutions
-    if previous_evolutions:
-        previous_evolutions = {
-            "title_ru": previous_evolutions.title,
-            "pokemon_id": previous_evolutions.id,
-            "img_url": previous_evolutions.get_image_url(request)
+    previous_evolution = pokemon.previous_evolutions
+    if previous_evolution:
+        previous_evolution = {
+            "title_ru": previous_evolution.title,
+            "pokemon_id": previous_evolution.id,
+            "img_url": previous_evolution.get_image_url(request)
         }
     next_evolution = pokemon.next_evolution.first()
     if next_evolution:
@@ -82,7 +82,7 @@ def show_pokemon(request, pokemon_id):
         "title_jp": pokemon.title_jp,
         "img_url": image_url,
         "description": pokemon.description,
-        "previous_evolution": previous_evolutions,
+        "previous_evolution": previous_evolution,
         "next_evolution": next_evolution
     }
 
